@@ -1,14 +1,20 @@
-# put here your custom config value
-menu "Example Configuration"
-config ESP_WIFI_SSID
+menu "WiFi and Pi-Hole credentials"
+config WIFI_SSID
     string "WiFi SSID"
     default "myssid"
     help
-	SSID (network name) for the example to connect to.
+    SSID (network name).
 
-config ESP_WIFI_PASSWORD
+config WIFI_PASSWORD
     string "WiFi Password"
     default "mypassword"
     help
-	WiFi password (WPA or WPA2) for the example to use.
+    WiFi password (WPA or WPA2).
+
+config PI_HOLE_TOKEN
+    string "API token from pi.hole"
+    default "1234"
+    help
+    Token revealed at http://pi.hole/admin/settings.php?tab=api
+
 endmenu

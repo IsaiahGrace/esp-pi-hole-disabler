@@ -1,11 +1,7 @@
-ESP-IDF template app
+ESP32 Pi-Hole disable button
 ====================
 
-This is a template application to be used with [Espressif IoT Development Framework](https://github.com/espressif/esp-idf).
+The objective is to make a physical button which will disable the Pi-Hole add blocker for one minute.
 
-Please check [ESP-IDF docs](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html) for getting started instructions.
-
-*Code in this repository is in the Public Domain (or CC0 licensed, at your option.)
-Unless required by applicable law or agreed to in writing, this
-software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied.*
+# Secrets
+This repo does not track the WiFi SSID, password, or the pi-hole API token. You will have to run `idf.py menuconfig` and enter these secrets manually in the "WiFi and Pi-Hole credentials" sub-menu
