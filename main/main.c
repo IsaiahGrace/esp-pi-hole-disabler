@@ -11,20 +11,37 @@ static const char* TAG_NET  = "network";
 static const char* TAG_SLP  = "sleep";
 
 // LED functions
+static const gpio_num_t led_green = GPIO_NUM_22;
+static const gpio_num_t led_red   = GPIO_NUM_23;
+
+void led_setup() {
+    ESP_LOGI(TAG_LED, "Configuring LED pins.");
+
+    gpio_reset_pin(led_green);
+    gpio_reset_pin(led_red);
+
+    gpio_set_direction(led_green, GPIO_MODE_OUTPUT);
+    gpio_set_direction(led_red, GPIO_MODE_OUTPUT);
+}
+
 void led_green_on() {
-    ESP_LOGI(TAG_LED, "Turning green LED on.");
+    ESP_LOGI(TAG_LED, "Turning on green LED.");
+    ESP_ERROR_CHECK(gpio_set_level(led_green, 1));
 }
 
 void led_green_off() {
-    ESP_LOGI(TAG_LED, "Turning green LED off.");
+    ESP_LOGI(TAG_LED, "Turning off green LED.");
+    ESP_ERROR_CHECK(gpio_set_level(led_green, 0));
 }
 
 void led_red_on() {
-    ESP_LOGI(TAG_LED, "Turning red LED on.");
+    ESP_LOGI(TAG_LED, "Turning on red LED.");
+    ESP_ERROR_CHECK(gpio_set_level(led_red, 1));
 }
 
 void led_red_off() {
-    ESP_LOGI(TAG_LED, "Turning red LED off.");
+    ESP_LOGI(TAG_LED, "Turning off red LED.");
+    ESP_ERROR_CHECK(gpio_set_level(led_red, 0));
 }
 
 // Sleep functions
@@ -50,7 +67,9 @@ int disable_blocking() {
 void app_main(void) {
     ESP_LOGI(TAG_MAIN, "Wakeup!");
 
+    led_setup();
     led_red_on();
+    led_green_on();
 
     esp_sleep_wakeup_cause_t wakeup_cause = esp_sleep_get_wakeup_cause();
 
@@ -59,11 +78,10 @@ void app_main(void) {
 
         if (disable_blocking() == ESP_OK) {
             ESP_LOGI(TAG_MAIN, "Disabled add blocking.");
-            led_green_on();
             led_red_off();
         } else {
             ESP_LOGI(TAG_MAIN, "Failed to disable add blocking.");
-            led_green_on();
+            led_green_off();
         }
 
         ESP_LOGI(TAG_MAIN, "Waiting for one minute.");
