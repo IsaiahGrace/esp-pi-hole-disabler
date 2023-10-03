@@ -3,6 +3,11 @@ ESP32 Pi-Hole disable button
 
 The objective is to make a physical button which will disable the Pi-Hole add blocker for one minute.
 
+# How to compile
+This project uses the wonderful esp-idf SDK from Espressif. You will need to install it in order to compile this project.
+1. Enter the required secrets with `idf.py menuconfig`
+2. Build, flash, and monitor with `idf.py flash monitor`
+
 # LED indicators
 ![led_behavior](doc/led_behavior.png "LED indicators")
 
