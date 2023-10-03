@@ -275,9 +275,6 @@ esp_err_t post_request(void) {
         return ESP_FAIL;
     }
 
-    // Once I got -1 bytes_read from read(), so I'm just guessing that waiting a little will help...
-    vTaskDelay(500 / portTICK_PERIOD_MS);
-
     // Read the HTTP response from the Pi-Hole.
     // The response is typically ~600 bytes, and ends with a json response.
     // When the request is successful, the response ends like this: {"status":"disabled"}
@@ -287,8 +284,10 @@ esp_err_t post_request(void) {
     int bytes_read = 0;
     int total_bytes_read = 0;
     char recv_buf[1024];
+    int retries = 0;
     memset(recv_buf, 0x00, sizeof(recv_buf));
     do {
+        errno = 0;
         bytes_read = read(sock, &(recv_buf[total_bytes_read]), sizeof(recv_buf) - total_bytes_read - 1);
 
         ESP_LOGI(TAG, "read(sock, &(recv_buf[%d]), %d) = %d",
@@ -296,8 +295,17 @@ esp_err_t post_request(void) {
             sizeof(recv_buf) - total_bytes_read - 1,
             bytes_read);
 
+        // Sometimes everything works, but read returns -1 and errno is EAGAIN (11)
+        // We just have to try again in this case, but I don't want an infinite loop...
+        if (bytes_read == -1) {
+            ESP_LOGE(TAG, "read() = -1 errno: %d retries: %d", errno, retries);
+            bytes_read = 0;
+            retries++;
+            vTaskDelay(500 / portTICK_PERIOD_MS);
+        }
+
         total_bytes_read += bytes_read;
-    } while (bytes_read > 0);
+    } while ((retries < 5) && (bytes_read > 0 || errno == EAGAIN));
 
 
     ESP_LOGI(TAG, "Pi-Hole server response:\n%s", recv_buf);
