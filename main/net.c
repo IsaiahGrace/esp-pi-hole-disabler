@@ -50,13 +50,11 @@ static const char* example_ipv6_addr_types_to_str[6] = {
     "ESP_IP6_ADDR_IS_IPV4_MAPPED_IPV6"
 };
 
-static void handler_on_wifi_connect(void* esp_netif, esp_event_base_t event_base,
-                                    int32_t event_id, void* event_data) {
+static void handler_on_wifi_connect(void* esp_netif, esp_event_base_t event_base, int32_t event_id, void* event_data) {
     esp_netif_create_ip6_linklocal(esp_netif);
 }
 
-static void handler_on_wifi_disconnect(void* arg, esp_event_base_t event_base,
-                                       int32_t event_id, void* event_data) {
+static void handler_on_wifi_disconnect(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
     s_retry_num++;
     if (s_retry_num > WIFI_CONN_MAX_RETRY) {
         ESP_LOGE(TAG, "WiFi Connect failed %d times, stop reconnect.", s_retry_num);
@@ -81,8 +79,7 @@ static bool is_our_netif(const char* prefix, esp_netif_t* netif) {
     return strncmp(prefix, esp_netif_get_desc(netif), strlen(prefix) - 1) == 0;
 }
 
-static void handler_on_sta_got_ip(void* arg, esp_event_base_t event_base,
-                                          int32_t event_id, void* event_data) {
+static void handler_on_sta_got_ip(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
     s_retry_num = 0;
     ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
     if (!is_our_netif(NETIF_DESC_STA, event->esp_netif)) {
@@ -98,8 +95,7 @@ static void handler_on_sta_got_ip(void* arg, esp_event_base_t event_base,
     }
 }
 
-static void handler_on_sta_got_ipv6(void* arg, esp_event_base_t event_base,
-                                            int32_t event_id, void* event_data) {
+static void handler_on_sta_got_ipv6(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
     ip_event_got_ip6_t* event = (ip_event_got_ip6_t*) event_data;
     if (!is_our_netif(NETIF_DESC_STA, event->esp_netif)) {
         return;
@@ -290,7 +286,7 @@ esp_err_t post_request(void) {
         errno = 0;
         bytes_read = read(sock, &(recv_buf[total_bytes_read]), sizeof(recv_buf) - total_bytes_read - 1);
 
-        ESP_LOGI(TAG, "read(sock, &(recv_buf[%d]), %d) = %d",
+        ESP_LOGI(TAG, "read(sock, &(recv_buf[%d]), %lu) = %d",
             total_bytes_read,
             sizeof(recv_buf) - total_bytes_read - 1,
             bytes_read);
